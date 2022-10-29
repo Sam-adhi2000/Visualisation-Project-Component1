@@ -1,0 +1,162 @@
+---
+title: "Customer Personality Analysis"
+author: "Samriddha Adhikary"
+date: "2022-10-30"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+<style type="text/css">
+  body{
+  font-size: 13pt;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(gridExtra)
+```
+
+## Abstract
+
+Customer Personality Analysis is a detailed analysis of a company’s ideal customers. It helps a business to better understand its customers and makes it easier for them to modify products according to the specific needs, behaviours and concerns of different types of customers. The individual traits of a potential customer influences their investment patterns and understanding these behavioural patterns helps a business to cater to its target demographic's specificities and better market its products to boost customer loyalty and conversion.  
+
+## Introduction
+
+Customer personality analysis is imperative to business optimisation. In this project, we seek to identify the key factors affecting an individual's purchase habits. The dataset explores customers' behaviour across 29 different attributes, a subset of which we are going to consider for this project. The aim is to find out how personal characteristics, different purchasables, success of company's promotions and site of purchase are related.<br>
+In this study we will mainly focus on the following:<br>
+<b>1.</b> Products that are most invested in<br>
+<b>2.</b> Recency of purchase<br>
+<b>3.</b> Volume of complaints received in the last 2years<br>
+<b>4.</b> Incoming-Expenditure distribution<br>
+<b>5.</b> Education level wise income and spending<br>
+<b>6.</b> Company promotion acceptance rate depending on education level<br>
+<b>7.</b> Impact of site of purchase on revenue
+
+## Dataset Description
+
+The dataset for this project is provided by Dr. Omar Romero-Hernandez, obtained from kaggle the link to which is https://www.kaggle.com/datasets/imakash3011/customer-personality-analysis
+<br> The different attributes are described below:<br>
+<br>
+<br>
+<u>People</u><br>
+
+Education: Customer's education level<br>
+Income: Customer's yearly household income<br>
+Recency: Number of days since customer's last purchase<br>
+Complain: 1 if the customer complained in the last 2 years, 0 otherwise<br>
+
+<u>Products</u><br>
+
+MntWines: Amount spent on wine in last 2 years<br>
+MntFruits: Amount spent on fruits in last 2 years<br>
+MntMeatProducts: Amount spent on meat in last 2 years<br>
+MntFishProducts: Amount spent on fish in last 2 years<br>
+MntSweetProducts: Amount spent on sweets in last 2 years<br>
+MntGoldProds: Amount spent on gold in last 2 years<br>
+
+<u>Promotion</u><br>
+
+AcceptedCmp1: 1 if customer accepted the offer in the 1st campaign, 0 otherwise<br>
+AcceptedCmp2: 1 if customer accepted the offer in the 2nd campaign, 0 otherwise<br>
+AcceptedCmp3: 1 if customer accepted the offer in the 3rd campaign, 0 otherwise<br>
+AcceptedCmp4: 1 if customer accepted the offer in the 4th campaign, 0 otherwise<br>
+AcceptedCmp5: 1 if customer accepted the offer in the 5th campaign, 0 otherwise<br>
+Response: 1 if customer accepted the offer in the last campaign, 0 otherwise<br>
+
+<u>Place</u><br>
+
+NumWebPurchases: Number of purchases made through the company’s website<br>
+NumCatalogPurchases: Number of purchases made using a catalogue<br>
+NumStorePurchases: Number of purchases made directly in stores<br>
+
+In this report, we only represent a few plots corresponding to each area of interest of this study.
+```{r,echo=FALSE}
+data<-data.frame(read.csv("marketing_campaign.csv",sep="\t"))
+```
+
+## Graphical Representation of Key Aspects of the Data
+In this section we will visualise the key aspects of our data. We only explore a few plots in this report for the sake of brevity.<br>
+
+Here we have a distribution for the amount spent on wine by the customers.<br>
+
+
+```{r , echo=FALSE, fig.height=3, fig.width=7}
+library(ggplot2)
+ggplot(data,aes(MntWines))+geom_histogram(bins =15,colour="blue",fill="steelblue")+geom_freqpoly(bins=15,color="red",lwd=1)+xlab("Amount Spent")+ggtitle("Plot Representing Amount Spent on Wine")
+
+```
+
+<br> The distribution that we get is positively skewed.<br>
+The following plot shows a distribution for the number of days since customers’ last purchase with the company.<br>
+
+
+```{r,echo=FALSE, fig.height=3, fig.width=7}
+ggplot(data,aes(Recency))+geom_bar(width=1,colour="green",fill="lightgreen")+xlab("Recency of purchase")+ggtitle(" Distribution of Recency of Customers' Purchase")
+```
+<br> The diagram below represents the number of cases of Non-complaints vs. Complaints that have been lodged with the company in the last 2 years where 0 indicates that no complaints were made and 1 indicates that a complaint was lodged.<br>
+
+
+```{r,echo=FALSE, warning=FALSE, fig.height=4, fig.width=7}
+library(gridExtra)
+p<-ggplot(data,aes(as.character(Complain),fill=Complain))+geom_bar(colour="red",fill=c("pink","purple"),width=.8)+xlab("Response variable")+
+  geom_text(aes(label = ..count..), stat = "count",vjust=-.10)
+grid.arrange(p,top="Plot Representing Number of Cases of Non-complaints vs. Complaints \n in the Last 2 years")
+
+```
+<br> Now we take a look at the customers’ income-expenditure distribution.<br>
+
+
+```{r, echo=FALSE, fig.height=3, fig.width=8}
+data$Expenditure<-rowSums(data[,c(10:15)])
+options(scipen=10)
+ggplot(data=subset(data,!is.na(Income)))+
+  geom_histogram(aes(x=Expenditure,color="blue",fill='Expenditure'),color="darkblue",bins=20, alpha=I(0.75))+
+  geom_histogram(aes(x=Income,color="red",fill='Income'),color="darkblue",bins=40,alpha=I(0.5))+ geom_freqpoly(aes(Income),bins=30,color="black")+
+  scale_fill_manual(values=c("blue","orange"),'Legend')+
+  ggtitle("Customers' Income-Expenditure Distribution")+
+  xlab("Amount")
+```
+
+In this plot, we see that the customers spend only a small amount of their income.<br>
+Next, we would like to explore the income-expenditure distribution plots for customers based on their education level. In this report, we have only taken up the case of customers with ‘Basic’ education level.<br>
+
+
+```{r,echo=FALSE, fig.height=3, fig.width=8}
+ggplot(data=subset(data,Education=="Basic"))+
+  geom_histogram(aes(x=Expenditure,color="blue",fill='Expenditure'),color="darkblue",bins=20, alpha=I(0.75))+
+  geom_histogram(aes(x=Income,color="red",fill='Income'),color="darkblue",bins=20,alpha=I(0.5))+
+  scale_fill_manual(values=c("lightgreen","purple"),'Legend')+
+  ggtitle("Income and Expenditure of Customers\n with Education Level- 'Basic' ")+
+  xlab("Amount")
+```
+
+<br> In the following section, we are interested in analyzing the success of the company’s promotions. For now, we only study the response of customers with an education level of ‘Graduation’ towards the first promotional campaign. In the plot, 0 denotes that the offer was rejected by the customer and 1 denotes that it was accepted.<br>
+
+
+```{r,echo=FALSE, fig.height=4, fig.width=7}
+q<-ggplot(data=subset(data,Education=="Graduation"),aes(x=as.character(AcceptedCmp1),y=..count..,fill=AcceptedCmp1))+geom_bar(width=0.8)+xlab("Response variable")+
+  geom_text(aes(label = ..count..), stat = "count",vjust=-.10)+
+  theme(legend.position = "none")
+grid.arrange(q,top="Plot Representing Acceptance of Offer in the First Campaign,\n Customer Education Level being 'Graduation'")
+```
+
+As we can see, only a small number of customers accepted the offer.<br>
+Finally, we take a look at the distribution of Web Purchases made at the company. We will take up the case of purchases made at other sites in component 2.<br>
+
+
+```{r,echo=FALSE,warning=FALSE, fig.height=3, fig.width=7}
+ggplot(data,aes(ID,NumWebPurchases))+geom_col(width=10,fill="violet")+xlab("Customers")+ylab("Number of Web Purchases")+ggtitle("Plot representing number of web purchases \n done by customers")
+
+```
+
+## Summary of Analysis
+
+In this report, we get a tentative picture of consumer behaviour and how individual traits affect their purchase decisions. We will explore this in detail in component 2 to arrive at viable conclusions.
+
+## Conclusion
+
+From our analysis, we can conclude that various factors influence a person's brand loyalty and a customer's background profile can help a company tailor its products according to the needs of a specific demographic of people, thereby attracting a greater pool of people and increasing company sales.
+
