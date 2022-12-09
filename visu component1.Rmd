@@ -154,9 +154,11 @@ ggplot(data,aes(ID,NumWebPurchases))+geom_col(width=10,fill="violet")+xlab("Cust
 
 ## Summary of Analysis
 
-In this report, we get a tentative picture of consumer behaviour and how individual traits affect their purchase decisions. We will explore this in detail in component 2 to arrive at viable conclusions.
+In this report, we get a tentative picture of consumer behaviour and how individual traits affect their purchase decisions. We will explore this in detail in component 2 to arrive at viable conclusions.<br>
+To know more, check out my dashboard at https://samriddha.shinyapps.io/Component2/ and my youtube video at https://youtu.be/WJ1FMXaaD2A
 
 ## Conclusion
 
 From our analysis, we can conclude that various factors influence a person's brand loyalty and a customer's background profile can help a company tailor its products according to the needs of a specific demographic of people, thereby attracting a greater pool of people and increasing company sales.
+
 
